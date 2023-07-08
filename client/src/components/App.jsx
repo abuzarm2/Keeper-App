@@ -6,7 +6,6 @@ import CreateArea from "./CreateArea";
 
 function App() {
   const [notes, setNotes] = useState([]);
-  const [message, setMessage] = useState("");
 
   function addNote(Note) {
     setNotes((prevNotes) => {
@@ -17,7 +16,7 @@ function App() {
   useEffect(() => {
     fetch("https://cwzn3g-8000.csb.app")
       .then((response) => response.json())
-      .then((data) => setMessage(data.message));
+      .then((data) => setNotes(data));
   });
 
   function deleteNote(id) {
@@ -30,13 +29,11 @@ function App() {
   return (
     <div>
       <Header />
-      <h1>{message}</h1>
       <CreateArea onAdd={addNote} />
-      {notes.map((noteItem, index) => {
+      {notes.map((noteItem) => {
         return (
           <Note
-            key={index}
-            id={index}
+            key={noteItem._id}
             title={noteItem.title}
             content={noteItem.content}
             onDelete={deleteNote}
