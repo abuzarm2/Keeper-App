@@ -56,12 +56,14 @@ footer p {
 }
 
 .note button {
+  padding: 5px;
   position: relative;
   float: right;
   margin-right: 10px;
   color: #f5ba13;
   border: none;
-  width: 36px;
+  /* width: 36px; */
+  border-radius: 5px;
   height: 36px;
   cursor: pointer;
   outline: none;

@@ -7,23 +7,55 @@ import CreateArea from "./CreateArea";
 function App() {
   const [notes, setNotes] = useState([]);
 
-  function addNote(Note) {
-    setNotes((prevNotes) => {
-      return [...prevNotes, Note];
-    });
+  function addNote(note) {
+    fetch("https://cwzn3g-8000.csb.app/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(note),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setNotes((prevNotes) => [...prevNotes, data]);
+      })
+      .catch((error) => console.error("Error adding note:", error));
   }
 
   useEffect(() => {
     fetch("https://cwzn3g-8000.csb.app")
       .then((response) => response.json())
       .then((data) => setNotes(data));
-  });
+  }, []);
 
   function deleteNote(id) {
-    const notes2 = notes.filter((index) => {
-      return index !== id;
+    const updatedNotes = notes.filter((note) => {
+      return note._id != id;
     });
-    setNotes(notes2);
+    setNotes(updatedNotes);
+    fetch(`https://cwzn3g-8000.csb.app/delete/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Note deleted successfully");
+          return response.json();
+        } else {
+          console.error("Failed to delete note:", response.statusText);
+        }
+      })
+      .then((data) => {
+        // Access the response message from the parsed JSON data
+        const message = data.message;
+        alert(message);
+      })
+      .catch((error) => {
+        console.error("Error deleting note:", error);
+      });
   }
 
   return (
@@ -34,6 +66,7 @@ function App() {
         return (
           <Note
             key={noteItem._id}
+            id={noteItem._id}
             title={noteItem.title}
             content={noteItem.content}
             onDelete={deleteNote}
